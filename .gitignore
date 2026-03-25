@@ -42,3 +42,13 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Secrets (added 2026-03-25 security hardening)
+.env
+.env.*
+*.pem
+*.key
+cred.json
+auth.json
+service-account*.json
+*-credentials.json
