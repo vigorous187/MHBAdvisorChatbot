@@ -72,6 +72,7 @@ const axios = require('axios');
 const fs = require('fs');
 const cors = require('cors');
 const dotenv = require('dotenv'); // Add this line
+const Anthropic = require('@anthropic-ai/sdk');
 
 const cheerio = require('cheerio');
 
@@ -80,32 +81,24 @@ dotenv.config(); // Load environment variables from .env file
 
 const app = express();
 const port = 3000;
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 app.use(cors());
 app.use(bodyParser.json());
 
-// Route to handle incoming messages and interact with GPT-3.5-turbo
+// Route to handle incoming messages and interact with Claude Haiku
 app.post('/chat', async (req, res) => {
   try {
     const systemMessage = fs.readFileSync('./content.txt', 'utf8').trim();
 
-    const params = {
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: systemMessage },
-        { role: "user", content: req.body.message },
-      ],
-      temperature: req.body.temperature || 0.7,
-    };
-
-    const response = await axios.post('https://api.openai.com/v1/chat/completions', params, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, // Use environment variable
-      },
+    const message = await anthropic.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1024,
+      system: systemMessage,
+      messages: [{ role: "user", content: req.body.message }],
     });
 
-    res.json({ response: response.data.choices[0].message, "status": "success" });
+    res.json({ response: { role: "assistant", content: message.content[0].text }, "status": "success" });
   } catch (error) {
     console.error('Error processing the request:', error);
     res.status(500).json({ "status": "timeout", "message": "Internal server error. Please try again later." });
