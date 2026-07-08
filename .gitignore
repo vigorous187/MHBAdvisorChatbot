@@ -52,3 +52,7 @@ cred.json
 auth.json
 service-account*.json
 *-credentials.json
+
+..bfg-report/
+.railway/
+railway.json
