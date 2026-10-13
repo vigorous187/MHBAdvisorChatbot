@@ -112,31 +112,6 @@ app.get('/', (req, res) => {
 });
 
 
-app.post('/michael-the-home-buyer/mhb-advisor/instruction', function (req, res) {
-   
-  try {
-      // Assuming JSON data is expected in the request body
-      const caughtResponse = req.body.data;
-  
-      // Log the caught response (customize this part based on your needs)
-      console.log('Caught Response:', caughtResponse);
-  
-      
-      const $ = cheerio.load(caughtResponse);
-      const plainText = $.text();
-
-      // Update the text in the file
-      const filePath = "./content.txt"; // Replace with the actual file path
-      fs.writeFileSync(filePath, plainText, 'utf8');
-
-      console.log('File updated with plain text:', plainText);
-
-      res.status(200).json({ message: 'File updated with plain text' });
-    } catch (error) {
-      console.error('Error processing request:', error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
-})
 
 
 app.listen(port, () => {
